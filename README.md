@@ -16,7 +16,7 @@ Torq is an advanced node management software that helps lightning node operators
 
 Whether you're running a small or a large node, Torq can help you optimize its performance and streamline your node management process. Give it a try and see how it can simplify your node management tasks.
 
-![torq-automation-preview](https://user-images.githubusercontent.com/647617/223672620-dcc047f3-ebbe-4087-8da8-9a103d8b9570.png)
+![torq-automation-preview](./docs/images/automation.png)
 
 
 ## Quick start
