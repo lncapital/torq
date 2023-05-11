@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lnd-deployment
+  labels:
+    app: lnd-app
+    tier: lnd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lnd-app
+  template:
+    metadata:
+      labels:
+        app: lnd-app
+        tier: lnd
+    spec:
+      volumes:
+        - name: lnd-pv-storage
+          persistentVolumeClaim:
+            claimName: lnd-pv-claim
+      containers:
+        - name: lnd
+          image: "lightninglabs/lnd:v0.16.0-beta"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --bitcoin.active
+            - --bitcoin.mainnet
+            - --lnddir=/root/.lnd
+            - --bitcoin.node=bitcoind
+            - --tlsextradomain=lnd-service
+            - --rpclisten=0.0.0.0:10009
+            - --restlisten=0.0.0.0:8080
+            - --listen=0.0.0.0
+            - --bitcoind.rpchost=bitcoin-core-service
+            - --bitcoind.rpcpass=<RPC-Password>
+            - --bitcoind.rpcuser=<RPC-User>
+            - --bitcoind.zmqpubrawblock=tcp://bitcoin-core-service:28332
+            - --bitcoind.zmqpubrawtx=tcp://bitcoin-core-service:28333
+            - --db.backend=postgres
+            - --db.postgres.dsn=postgres://<lnd-postgres-user>:<lnd-postgres-pass>@lnd-postgres-service:5432/lndpostgresdb?sslmode=disable
+            - --wallet-unlock-password-file=/root/.lnd/wallet_password
+          volumeMounts:
+            - name: lnd-pv-storage
+              mountPath: "/root/.lnd"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lnd-service
+  labels:
+    tier: lnd
+spec:
+  selector:
+    app: lnd-app
+    tier: lnd
+  ports:
+    - port: 10009
+      name: lnd-rpc-port
+    - port: 9735
+      name: lnd-peer-port
+    - port: 8080
+      name: lnd-http-port

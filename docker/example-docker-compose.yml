@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  torq:
+    image: "lncapital/torq:latest"
+    restart: always
+    depends_on:
+      - "db"
+    command:
+      - --config
+      - "/home/torq/torq.conf"
+      - start
+    ports:
+      - "<YourPort>:<YourPort>"
+    volumes:
+      - <Path>:/home/torq/torq.conf
+  db:
+    restart: always
+    image: "timescale/timescaledb:latest-pg14"
+    environment:
+      POSTGRES_PASSWORD: "runningtorq" # Must match db password set above
+    volumes:
+      - torq_db:/var/lib/postgresql/data
+volumes:
+  torq_db:

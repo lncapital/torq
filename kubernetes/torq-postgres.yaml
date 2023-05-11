@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: torq-timescaledb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: torq-timescaledb-app
+  template:
+    metadata:
+      labels:
+        app: torq-timescaledb-app
+    spec:
+      containers:
+        - name: torq-timescaledb
+          image: timescale/timescaledb:latest-pg14
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              memory: "10G"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: torq-timescaledb-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: torqtimescaledb
+      volumes:
+        - name: torqtimescaledb
+          persistentVolumeClaim:
+            claimName: torq-timescaledb-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: torq-timescaledb-service
+spec:
+  selector:
+    app: torq-timescaledb-app
+  ports:
+    - port: 5432

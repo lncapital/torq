@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: torq-deployment
+  labels:
+    app: torq-app
+    tier: torq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: torq-app
+  template:
+    metadata:
+      labels:
+        app: torq-app
+        tier: torq
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+        - name: macaroonvolume
+          configMap:
+            name: lnd-admin.macaroon
+        - name: tlsvolume
+          configMap:
+            name: lnd-tls.cert
+      containers:
+        - name: vector
+          image: "lncapital/torq:latest"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --db.name=torqtimescaledb
+            - --db.host=torq-timescaledb-service
+            - --db.user=<torq-user>
+            - --db.password=<torq-pass>
+            - --lnd.url=lnd-service:10009
+            - --lnd.tls-path=/app/lnd/tls/tls.cert
+            - --lnd.macaroon-path=/app/lnd/macaroon/admin.macaroon
+            - start
+          volumeMounts:
+            - name: macaroonvolume
+              mountPath: /app/lnd/macaroon
+            - name: tlsvolume
+              mountPath: /app/lnd/tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: torq-service
+  labels:
+    tier: torq
+spec:
+  type: ClusterIP
+  selector:
+    app: torq-app
+    tier: torq
+  ports:
+    - port: 8080
+      name: torq-http-port

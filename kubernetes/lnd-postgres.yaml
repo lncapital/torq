@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lnd-postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lnd-postgres-app
+  template:
+    metadata:
+      labels:
+        app: lnd-postgres-app
+    spec:
+      containers:
+        - name: lnd-postgres
+          image: postgres:15
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: lnd-postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: lndpostgresdb
+      volumes:
+        - name: lndpostgresdb
+          persistentVolumeClaim:
+            claimName: lnd-postgres-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lnd-postgres-service
+spec:
+  selector:
+    app: lnd-postgres-app
+  ports:
+    - port: 5432
