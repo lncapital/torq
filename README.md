@@ -79,7 +79,7 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.password**: Password used to access the API and frontend (example: "C44y78A4JXHCVziRcFqaJfFij5HpJhF6VwKjz4vR")
  - **--torq.network-interface**: The nework interface to serve the HTTP API (default: "0.0.0.0")
  - **--torq.port**: Port to serve the HTTP API (default: "8080")
- - **--torq.pprof.path**: When pprof path is set then pprof is loaded when Torq boots. (example: "localhost:6060"). WARNING: pprof exposes internals of your app on whichever path you specify, be careful not to expose this publicly.
+ - **--torq.pprof.path**: When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). WARNING: pprof exposes internals of your app on whichever path you specify, be careful not to expose this publicly.
  - **--torq.debuglevel**: Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
  - **--torq.vector.url**: Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
  - **--torq.cookie-path**: Path to auth cookie file
