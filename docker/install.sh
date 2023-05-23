@@ -2,7 +2,7 @@
 
 echo Configuring docker-compose and torq.conf files
 
-CURRENT_DIRECTORY=echo `pwd`
+eval CURRENT_DIRECTORY=`pwd`
 printf "\n"
 echo Please specify where you want to add the Torq help commands
 read -p "Directory (default: ~/.torq): " TORQDIR
@@ -10,7 +10,7 @@ eval TORQDIR="${TORQDIR:=$HOME/.torq}"
 echo $TORQDIR
 mkdir -p $TORQDIR
 cd $TORQDIR
-TORQDIR=echo `pwd`
+eval TORQDIR=`pwd`
 cd $CURRENT_DIRECTORY
 printf "\n"
 
@@ -58,7 +58,7 @@ done
 printf "\n"
 
 
-[ -f docker-compose.yml ] && rm docker-compose.yml
+[ -f ${TORQDIR}/docker-compose.yml ] && rm ${TORQDIR}/docker-compose.yml
 
 TORQ_CONFIG=${TORQDIR}/torq.conf
 
