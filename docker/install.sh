@@ -2,13 +2,16 @@
 
 echo Configuring docker-compose and torq.conf files
 
-# Set Torq help commands directory
-
+CURRENT_DIRECTORY=echo `pwd`
 printf "\n"
 echo Please specify where you want to add the Torq help commands
 read -p "Directory (default: ~/.torq): " TORQDIR
 eval TORQDIR="${TORQDIR:=$HOME/.torq}"
 echo $TORQDIR
+mkdir -p $TORQDIR
+cd $TORQDIR
+TORQDIR=echo `pwd`
+cd $CURRENT_DIRECTORY
 printf "\n"
 
 # Set web UI password
@@ -54,14 +57,9 @@ done
 
 printf "\n"
 
-mkdir -p $TORQDIR
 
 [ -f docker-compose.yml ] && rm docker-compose.yml
 
-START_COMMAND='start-torq'
-STOP_COMMAND='stop-torq'
-UPDATE_COMMAND='update-torq'
-DELETE_COMMAND='delete-torq'
 TORQ_CONFIG=${TORQDIR}/torq.conf
 
 curl --location --silent --output "${TORQ_CONFIG}"                  https://raw.githubusercontent.com/lncapital/torq/main/docker/example-torq.conf
@@ -72,6 +70,36 @@ if [[ "$NETWORK" == "bridge" ]]; then
   curl --location --silent --output "${TORQDIR}/docker-compose.yml" https://raw.githubusercontent.com/lncapital/torq/main/docker/example-docker-compose.yml
 fi
 curl --location --silent --output "${TORQDIR}/${START_COMMAND}"     https://raw.githubusercontent.com/lncapital/torq/main/docker/start.sh
+
+chmod +x $TORQDIR/$START_COMMAND
+
+# https://stackoverflow.com/questions/16745988/sed-command-with-i-option-in-place-editing-works-fine-on-ubuntu-but-not-mac
+#torq.conf setup
+sed -i.bak "s|<Path>|$TORQ_CONFIG|g"            $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+if [[ "$NETWORK" == "bridge" ]]; then
+  sed -i.bak "s/<YourDatabaseHost>/db/g"        $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+  sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+fi
+sed -i.bak "s/<YourUIPassword>/$UIPASSWORD/g"   $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+if [[ "$NETWORK" == "host" ]]; then
+  sed -i.bak "s/<YourDatabaseHost>/localhost/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+fi
+#start-torq setup
+sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQDIR/start-torq         && rm $TORQDIR/start-torq.bak
+
+echo 'Docker compose file (docker-compose.yml) created in '$TORQDIR
+echo 'Torq configuration file (torq.conf) created in '$TORQDIR
+
+printf "\n"
+
+
+START_COMMAND='start-torq'
+STOP_COMMAND='stop-torq'
+UPDATE_COMMAND='update-torq'
+DELETE_COMMAND='delete-torq'
+
+curl --location --silent --output "${TORQDIR}/${START_COMMAND}"     https://raw.githubusercontent.com/lncapital/torq/main/docker/start.sh
 curl --location --silent --output "${TORQDIR}/${STOP_COMMAND}"      https://raw.githubusercontent.com/lncapital/torq/main/docker/stop.sh
 curl --location --silent --output "${TORQDIR}/${UPDATE_COMMAND}"    https://raw.githubusercontent.com/lncapital/torq/main/docker/update.sh
 curl --location --silent --output "${TORQDIR}/${DELETE_COMMAND}"    https://raw.githubusercontent.com/lncapital/torq/main/docker/delete.sh
@@ -80,21 +108,6 @@ chmod +x $TORQDIR/$START_COMMAND
 chmod +x $TORQDIR/$STOP_COMMAND
 chmod +x $TORQDIR/$UPDATE_COMMAND
 chmod +x $TORQDIR/$DELETE_COMMAND
-
-# https://stackoverflow.com/questions/16745988/sed-command-with-i-option-in-place-editing-works-fine-on-ubuntu-but-not-mac
-#torq.conf setup
-sed -i.bak "s/<YourUIPassword>/$UIPASSWORD/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
-sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
-#docker-compose.yml setup
-sed -i.bak "s|<Path>|$TORQ_CONFIG|g"          $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
-if [[ "$NETWORK" == "bridge" ]]; then
-  sed -i.bak "s/<YourPort>/$UI_PORT/g"        $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
-fi
-#start-torq setup
-sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQDIR/start-torq         && rm $TORQDIR/start-torq.bak
-
-echo 'Docker compose file (docker-compose.yml) created in '$TORQDIR
-echo 'Torq configuration file (torq.conf) created in '$TORQDIR
 
 printf "\n"
 
