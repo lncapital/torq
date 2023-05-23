@@ -82,8 +82,6 @@ sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQ_CONFIG                && r
 if [[ "$NETWORK" == "host" ]]; then
   sed -i.bak "s/<YourDatabaseHost>/localhost/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
 fi
-#start-torq setup
-sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQDIR/start-torq         && rm $TORQDIR/start-torq.bak
 
 echo 'Docker compose file (docker-compose.yml) created in '$TORQDIR
 echo 'Torq configuration file (torq.conf) created in '$TORQDIR
@@ -100,6 +98,9 @@ curl --location --silent --output "${TORQDIR}/${START_COMMAND}"     https://raw.
 curl --location --silent --output "${TORQDIR}/${STOP_COMMAND}"      https://raw.githubusercontent.com/lncapital/torq/main/docker/stop.sh
 curl --location --silent --output "${TORQDIR}/${UPDATE_COMMAND}"    https://raw.githubusercontent.com/lncapital/torq/main/docker/update.sh
 curl --location --silent --output "${TORQDIR}/${DELETE_COMMAND}"    https://raw.githubusercontent.com/lncapital/torq/main/docker/delete.sh
+
+#start-torq setup
+sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQDIR/${START_COMMAND}   && rm $TORQDIR/start-torq.bak
 
 chmod +x $TORQDIR/$START_COMMAND
 chmod +x $TORQDIR/$STOP_COMMAND
