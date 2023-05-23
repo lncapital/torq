@@ -69,9 +69,6 @@ fi
 if [[ "$NETWORK" == "bridge" ]]; then
   curl --location --silent --output "${TORQDIR}/docker-compose.yml" https://raw.githubusercontent.com/lncapital/torq/main/docker/example-docker-compose.yml
 fi
-curl --location --silent --output "${TORQDIR}/${START_COMMAND}"     https://raw.githubusercontent.com/lncapital/torq/main/docker/start.sh
-
-chmod +x $TORQDIR/$START_COMMAND
 
 # https://stackoverflow.com/questions/16745988/sed-command-with-i-option-in-place-editing-works-fine-on-ubuntu-but-not-mac
 #torq.conf setup
