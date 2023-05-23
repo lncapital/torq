@@ -71,15 +71,18 @@ chmod +x $TORQDIR/$START_COMMAND
 
 # https://stackoverflow.com/questions/16745988/sed-command-with-i-option-in-place-editing-works-fine-on-ubuntu-but-not-mac
 #torq.conf setup
-sed -i.bak "s/<YourUIPassword>/$UIPASSWORD/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
-sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
-#docker-compose.yml setup
-sed -i.bak "s|<Path>|$TORQ_CONFIG|g"          $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+sed -i.bak "s|<Path>|$TORQ_CONFIG|g"           $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
 if [[ "$NETWORK" == "bridge" ]]; then
-  sed -i.bak "s/<YourPort>/$UI_PORT/g"        $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+  sed -i.bak "s/<YourDatabaseHost>/db/g"       $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+  sed -i.bak "s/<YourPort>/$UI_PORT/g"         $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+fi
+sed -i.bak "s/<YourUIPassword>/$UIPASSWORD/g"  $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+sed -i.bak "s/<YourPort>/$UI_PORT/g"           $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+if [[ "$NETWORK" == "host" ]]; then
+  sed -i.bak "s/<YourDatabaseHost>/localhost/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
 fi
 #start-torq setup
-sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQDIR/start-torq         && rm $TORQDIR/start-torq.bak
+sed -i.bak "s/<YourPort>/$UI_PORT/g"           $TORQDIR/start-torq         && rm $TORQDIR/start-torq.bak
 
 echo 'Docker compose file (docker-compose.yml) created in '$TORQDIR
 echo 'Torq configuration file (torq.conf) created in '$TORQDIR
