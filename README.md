@@ -109,7 +109,7 @@ It is also possible not to use any TOML configuration files and use command like
 [![Torq Forwarding Views YouTube Guide](https://img.youtube.com/vi/ZTetH8_jbgk/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZTetH8_jbgk)
 
 
-## Permissions
+## LND Permissions
 
 Since Torq is built to manage your node, it needs most/all permissions to be fully functional. However, if you want to
 be extra careful you can disable some permissions that are not strictly needed.
@@ -149,6 +149,13 @@ Here is an example of a macaroon that can be used if you want to prevent all act
         info:read \
         uri:/lnrpc.Lightning/UpdateChannelPolicy \
         --save_to=torq.macaroon
+
+## CLN
+
+We support CLN v23.05+ nodes. Make sure your CLN node is up-to-date.
+
+You will have to have RUST active and also specify  `--grpc-port` which should generate the appropriate mTLS certificates.
+You need to provide these certificates once Torq is running (or as boot parameter or in the configuration file)
 
 ## Help and feedback
 
