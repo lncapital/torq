@@ -71,6 +71,10 @@ It is also possible not to use any TOML configuration files and use command like
  - **--lnd.url**: Host:Port of the LND node (example: "127.0.0.1:10009")
  - **--lnd.macaroon-path**: Path on disk to LND Macaroon (example: "~/.lnd/admin.macaroon")
  - **--lnd.tls-path**: Path on disk to LND TLS file (example: "~/.lnd/tls.cert")
+ - **--cln.url**:  Host:Port of the CLN node (example: "127.0.0.1:17272")
+ - **--cln.certificate-path**: Path on disk to CLN client certificate file (example: "~/.cln/client.pem")
+ - **--cln.key-path**: Path on disk to CLN client key file (example: "~/.cln/client-key.pem")
+ - **--cln.ca-certificate-path**: Path on disk to CLN certificate authority file (example: "~/.cln/ca.pem")
  - **--db.name**: Name of the database (default: "torq")
  - **--db.user**: Name of the postgres user with access to the database (default: "postgres")
  - **--db.password**: Password used to access the database (default: "runningtorq")
@@ -85,6 +89,7 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.cookie-path**: Path to auth cookie file
  - **--torq.no-sub**: Start the server without subscribing to node data (default: "false")
  - **--torq.auto-login**: Allows logging in without a password (default: "false")
+ - **--customize.mempool.url**: Mempool custom URL (no trailing slash) (default: "https://mempool.space")
 
 
 ## How to Videos
