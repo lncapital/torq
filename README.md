@@ -29,6 +29,14 @@ bash -c "$(curl -fsSL https://torq.sh)"
 ```
 You do not need sudo/root to run this, and you can check the contents of the installation script here: https://torq.sh
 
+When you:
+ - Have a firewall
+ - Run Torq in a container
+ - Need to access LND or CLN on the host
+ - Are not using host network configuration for the container
+
+Then make sure to allow docker bridge network traffic i.e. `sudo ufw allow from 172.16.0.0/12`
+
 ### Podman
 To run the database via host network:
 
