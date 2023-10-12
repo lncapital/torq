@@ -75,7 +75,7 @@ We're adding more guides and help articles on [https://docs.ln.capital](docs.ln.
 Torq supports a TOML configuration file. The docker compose install script auto generates this file.
 You can find an example configuration file at [example-torq.conf](./docker/example-torq.conf)
 
-It is also possible not to use any TOML configuration files and use command like parameters. The list of parameters are:
+It is also possible not to use any TOML configuration files and use command like parameters or environment variables. The list of parameters are:
  - **--lnd.url**: Host:Port of the LND node (example: "127.0.0.1:10009")
  - **--lnd.macaroon-path**: Path on disk to LND Macaroon (example: "~/.lnd/admin.macaroon")
  - **--lnd.tls-path**: Path on disk to LND TLS file (example: "~/.lnd/tls.cert")
@@ -98,6 +98,14 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.no-sub**: Start the server without subscribing to node data (default: "false")
  - **--torq.auto-login**: Allows logging in without a password (default: "false")
  - **--customize.mempool.url**: Mempool custom URL (no trailing slash) (default: "https://mempool.space")
+ - **--otel.exporter.type**: (optional) OpenTelemetry exporter type: stdout/file/jaeger (default: "stdout")
+ - **--otel.exporter.endpoint**: (optional) OpenTelemetry exporter endpoint
+ - **--otel.exporter.path**: (optional) OpenTelemetry exporter path (default: "traces.txt")
+ - **--otel.sampler.fraction**: (optional) OpenTelemetry sampler fraction (default: "0.0")
+ - **--bitcoind.network**: (optional) Bitcoind network: MainNet/TestNet/RegTest/SigNet/SimNet. (default: "MainNet")
+ - **--bitcoind.url**: (optional) Bitcoind RPC Host:Port
+ - **--bitcoind.user**: (optional) Bitcoind RPC username
+ - **--bitcoind.password**: (optional) Bitcoind RPC password
 
 
 ## How to Videos
@@ -160,10 +168,16 @@ Here is an example of a macaroon that can be used if you want to prevent all act
 
 ## CLN
 
-We support CLN v23.05+ nodes. Make sure your CLN node is up-to-date.
+We support CLN nodes. Make sure your CLN node is up-to-date.
 
 You will have to have RUST active and also specify  `--grpc-port` which should generate the appropriate mTLS certificates.
 You need to provide these certificates once Torq is running (or as boot parameter or in the configuration file)
+
+## Compatibility
+
+Torq `v0.22.1` -> `v1.1.5` are all compatible with `CLN v23.05.*`
+
+Torq `v1.2.0` and up are compatible with `CLN v23.08.1+` so **NOT** with `CLN v23.05.*`
 
 ## Help and feedback
 
