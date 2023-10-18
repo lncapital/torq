@@ -66,9 +66,10 @@ The network switch is the globe icon in the top left corner, next to the Torq lo
 
 ### Guides
 
-We're adding more guides and help articles on [https://docs.ln.capital](docs.ln.capital).
+We're adding more guides and help articles on [https://docs.torq.co](docs.torq.co).
 
-* [How to add a domain for Torq with https](https://docs.ln.capital/en/articles/7323907-how-to-add-a-domain-to-torq-using-caddy).
+* [How to add a domain for Torq with https](https://docs.torq.co/en/articles/7323907-how-to-add-a-domain-to-torq-using-caddy).
+* [How to monitor your infrastructure with Torq](https://docs.torq.co/en/articles/7323908-how-to-monitor-your-infrastructure-with-torq).
 
 ## Configuration
 
@@ -91,7 +92,8 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.password**: Password used to access the API and frontend (example: "C44y78A4JXHCVziRcFqaJfFij5HpJhF6VwKjz4vR")
  - **--torq.network-interface**: The nework interface to serve the HTTP API (default: "0.0.0.0")
  - **--torq.port**: Port to serve the HTTP API (default: "8080")
- - **--torq.pprof.path**: When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). WARNING: pprof exposes internals of your app on whichever path you specify, be careful not to expose this publicly.
+ - **--torq.pprof.path**: When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). **See Note**
+ - **--torq.prometheus.path**: When prometheus path is set then prometheus is loaded when Torq boots. (example: "localhost:7070"). **See Note**
  - **--torq.debuglevel**: Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
  - **--torq.vector.url**: Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
  - **--torq.cookie-path**: Path to auth cookie file
@@ -107,10 +109,13 @@ It is also possible not to use any TOML configuration files and use command like
  - **--bitcoind.user**: (optional) Bitcoind RPC username
  - **--bitcoind.password**: (optional) Bitcoind RPC password
 
+**Note**: pprof and prometheus expose internal statistics, be careful not to expose this publicly.
+
+More information about infrastructure and node monitoring over [here](https://docs.torq.co/en/articles/8488866-infrastructure-and-node-monitoring)
 
 ## How to Videos
 
-[You can find the full list of video guides here.](https://docs.ln.capital/en/collections/3817618-torq-video-tutorials)
+[You can find the full list of video guides here.](https://docs.torq.co/en/collections/3817618-torq-video-tutorials)
 
 ### How to create custom Channel Views
 
