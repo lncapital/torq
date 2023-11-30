@@ -66,7 +66,7 @@ The network switch is the globe icon in the top left corner, next to the Torq lo
 
 ### Guides
 
-We're adding more guides and help articles on [https://docs.torq.co](docs.torq.co).
+We're adding more guides and help articles on [docs.torq.co](https://docs.torq.co).
 
 * [How to add a domain for Torq with https](https://docs.torq.co/en/articles/7323907-how-to-add-a-domain-to-torq-using-caddy).
 * [How to monitor your infrastructure with Torq](https://docs.torq.co/en/articles/7323908-how-to-monitor-your-infrastructure-with-torq).
