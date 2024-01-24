@@ -100,6 +100,7 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.no-sub**: Start the server without subscribing to node data (default: "false")
  - **--torq.auto-login**: Allows logging in without a password (default: "false")
  - **--customize.mempool.url**: Mempool custom URL (no trailing slash) (default: "https://mempool.space")
+ - **--customize.fedi**: Enable Fedi mode (default: "false")
  - **--otel.exporter.type**: (optional) OpenTelemetry exporter type: stdout/file/jaeger (default: "stdout")
  - **--otel.exporter.endpoint**: (optional) OpenTelemetry exporter endpoint
  - **--otel.exporter.path**: (optional) OpenTelemetry exporter path (default: "traces.txt")
@@ -173,16 +174,18 @@ Here is an example of a macaroon that can be used if you want to prevent all act
 
 ## CLN
 
-We support CLN nodes. Make sure your CLN node is up-to-date.
+We support CLN nodes (Except HTLC firewall). Make sure your CLN node is compatible with the version of Torq (See Compatibility).
 
 You will have to have RUST active and also specify  `--grpc-port` which should generate the appropriate mTLS certificates.
 You need to provide these certificates once Torq is running (or as boot parameter or in the configuration file)
 
 ## Compatibility
 
-Torq `v0.22.1` -> `v1.1.5` are all compatible with `CLN v23.05.*`
+Torq `v0.22.1` <-> `v1.1.5` are all compatible with `CLN v23.05.*`
 
-Torq `v1.2.0` and up are compatible with `CLN v23.08.1+` so **NOT** with `CLN v23.05.*`
+Torq `v1.2.0` <-> `v1.4.3` are compatible with `CLN v23.08.1+`
+
+Torq `v1.5.0` and up are compatible with `CLN v23.11.*`
 
 ## Help and feedback
 
