@@ -1,0 +1,271 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package torq;
+
+// version 1.5
+
+option go_package = "github.com/lncapital/torq-core/torq";
+
+
+// Grpc exposed by Torq
+service Torq {
+
+  // Get a list of active nodes that have node_handle in Torq. Use this to get the node_handle for other requests.
+  rpc GetActiveNodes (GetActiveNodesRequest) returns (GetActiveNodesResponse) {}
+
+  // Get infromation about the node by querying it from the node
+  rpc GetNodeInformation (GetNodeInformationRequest) returns (GetNodeInformationResponse) {}
+
+  rpc ConnectPeer (ConnectPeerRequest) returns (ConnectPeerResponse) {}
+
+  rpc DisconnectPeer (DisconnectPeerRequest) returns (DisconnectPeerResponse) {}
+
+  rpc OpenChannel (OpenChannelRequest) returns (OpenChannelResponse) {}
+
+  // Close a channel by short channel id or torq channel id
+  rpc CloseChannel (CloseChannelRequest) returns (CloseChannelResponse) {}
+
+  rpc SendPayment (SendPaymentRequest) returns (SendPaymentResponse) {}
+
+  rpc CreateInvoice (CreateInvoiceRequest) returns (CreateInvoiceResponse) {}
+
+  // Subscribe to single invoice to get status updates
+  rpc WaitInvoiceSettledByPaymentHash (WaitInvoiceSettledByPaymentHashRequest) returns (stream InvoiceStatusResponse) {}
+
+  // Subscribe to all invoices to get status updates, give list of node handles to only return invoices from those nodes
+  rpc SubscribeInvoiceStatuses (SubscribeInvoiceStatusesRequest) returns (stream InvoiceStatusResponse) {}
+}
+
+
+// Request and Response messages
+enum NodeImplementation {
+  LND = 0;
+  CLN = 1;
+}
+
+enum Network {
+  MainNet = 0;
+  TestNet = 1;
+  RegTest = 2;
+  SigNet = 3;
+  SimNet = 4;
+}
+
+enum ChannelStatus {
+  Opening = 0;
+  Open = 1;
+  Closing = 2;
+  CooperativeClosed      = 100;
+  LocalForceClosed       = 101;
+  RemoteForceClosed      = 102;
+  BreachClosed           = 103;
+  FundingCancelledClosed = 104;
+  AbandonedClosed        = 105;
+}
+
+enum PaymentStatus {
+  UnknownStatus = 0;
+  InFlight = 1;
+  Succeeded = 2;
+  Failed = 3;
+}
+
+enum SendPaymentError {
+  None = 0;
+  UnknownSendPaymentError = 1;
+  NoRoute = 2;
+  Timeout = 3;
+  InvoiceExpired = 4;
+  AlreadyPaid = 5;
+  IncorrectPaymentDetails = 6;
+  InsufficientBalance = 7;
+  IncorrectPaymentAmount = 8;
+  InvalidPaymentRequest = 9;
+  AmountRequired = 10;
+  AmountMustNotBeSpecified = 11;
+  WarningPartialCompletion = 12; //Corresponds to CLN WarningPartialCompletion
+}
+
+enum InvoiceStatus {
+  InvoiceOpen = 0;
+  InvoiceSettled = 1;
+  InvoiceCancelled = 2;
+  InvoiceAccepted = 3;
+}
+
+message GetActiveNodesRequest {
+  // Optional parameter to get only nodes of a specific network
+  optional Network network = 1;
+  // Optional parameter to get only nodes of a specific implementation
+  optional NodeImplementation implementation = 2;
+}
+
+message TorqNodeBasicInfo {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  Network network = 2;
+  string public_key = 3;
+  // Name for the node given in Torq
+  string node_name = 4;
+  NodeImplementation implementation = 5;
+}
+
+message GetActiveNodesResponse {
+  repeated TorqNodeBasicInfo nodes = 1;
+}
+
+message GetNodeInformationRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+}
+
+message GetNodeInformationResponse {
+  NodeImplementation implementation = 1;
+  string version = 2;
+  string public_key = 3;
+  string alias = 4;
+  string color = 5;
+  int32 pending_channel_count = 6;
+  int32 active_channel_count = 7;
+  int32 inactive_channel_count = 8;
+  int32 peer_count = 9;
+  uint32 block_height = 10;
+  string block_hash = 11;
+  google.protobuf.Timestamp best_header_timestamp = 12;
+  bool chain_synced = 13;
+  bool graph_synced = 14;
+  repeated string addresses = 15;
+  bool htlc_interceptor_required = 16;
+}
+
+message ConnectPeerRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  string public_key = 2;
+  string host = 3;
+}
+
+message ConnectPeerResponse {
+  bool success = 1;
+}
+
+message DisconnectPeerRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  string public_key = 2;
+}
+
+message DisconnectPeerResponse {
+  bool success = 1;
+}
+
+message OpenChannelRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  optional uint64 sat_per_v_byte = 2;
+  // Public key of the node to open channel with
+  string public_key = 3;
+  // Host of the node to open channel with in format of ip:port
+  optional string host = 4;
+  int64 local_funding_amount = 5;
+  optional int64 push_amount = 6;
+  optional int32 target_conf = 7;
+  optional bool private = 8;
+  optional uint64 min_htlc_msat = 9;
+  optional uint32 remote_csv_delay = 10;
+  optional int32 min_confs = 11;
+  optional bool spend_unconfirmed = 12;
+  optional string close_address = 13;
+}
+
+message OpenChannelResponse {
+  ChannelStatus channel_status = 1;
+  string channel_point = 2;
+  string funding_transaction_hash = 3;
+  uint32 funding_output_index = 4;
+}
+
+message CloseChannelRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  // Short channel id in the format of 123x123x123
+  optional string short_channel_id = 2;
+  // Torq channel id in the format of 1, 2, 3 etc.
+  optional int32 torq_channel_id = 3;
+  optional bool force = 4;
+  optional int32 target_conf = 5;
+  optional string delivery_address = 6;
+  optional uint64 sat_per_v_byte = 7;
+}
+
+message CloseChannelResponse {
+  ChannelStatus channel_status = 1;
+  string closing_transaction_hash = 2;
+}
+
+message SendPaymentRequest {
+  // node_handle that is used to identify nodes
+  string node_handle = 1;
+  // The "invoice" to pay. A string starting with ln
+  string payment_request = 2;
+  // Seconds to wait for the payment to complete (default 60)
+  optional int32 time_out_secs =3;
+  // Milli satoshis to send. If not specified, the invoice amount is used.
+  optional int64 amount_msat = 4;
+  // Fee limit in milli satoshis.
+  int64 fee_limit_msat = 5;
+  // Allow self payment. Default is false. Only supported in LND for now.
+  optional bool allow_self_payment = 6;
+}
+
+message SendPaymentResponse {
+  string payment_hash = 1;
+  PaymentStatus payment_status = 2;
+  SendPaymentError payment_error = 3;
+  string payment_secret = 4;
+  int64 value_msat = 6;
+  // The original payment request string
+  string payment_request = 7;
+  int64 fee_msat = 9;
+  google.protobuf.Timestamp creation_time = 10;
+}
+
+message CreateInvoiceRequest {
+  string node_handle = 1;
+  optional int64 value_msat = 3;
+  optional string memo = 4;
+  optional string payment_secret = 5;
+  optional int64 expiry_sec = 6;
+  optional string fallback_addr = 7;
+  optional string cln_label = 8; // Invoice label for CLN
+}
+
+message CreateInvoiceResponse {
+  string payment_request = 1;
+  // For LND this is the "AddIndex", for CLN it's "created_index" (added on v23.08)
+  uint64 index = 2;
+  bytes payment_hash = 3;
+  string payment_address = 4;
+}
+
+message WaitInvoiceSettledByPaymentHashRequest {
+  bytes payment_hash = 1;
+  optional int32 time_out_secs = 2;
+}
+
+message InvoiceStatusResponse {
+  bytes payment_hash = 1;
+  bytes payment_secret = 2;
+  string payment_request = 3;
+  string memo = 4;
+  InvoiceStatus status = 5;
+  int64 amount_paid_msat = 6;
+  google.protobuf.Timestamp settle_date = 7;
+}
+
+message SubscribeInvoiceStatusesRequest {
+  repeated string node_handles = 1;
+  optional google.protobuf.Timestamp start_time = 2;
+}
