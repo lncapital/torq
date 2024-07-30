@@ -8,7 +8,6 @@ package torq;
 
 option go_package = "github.com/lncapital/torq-core/torq";
 
-
 // Grpc exposed by Torq
 service Torq {
 
@@ -31,11 +30,29 @@ service Torq {
 
   rpc CreateInvoice (CreateInvoiceRequest) returns (CreateInvoiceResponse) {}
 
+  rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {}
+
+  rpc TagPeer (TagPeerRequest) returns (TagPeerResponse) {}
+
+  rpc TriggerWorkflow (WorkflowRequest) returns (WorkflowResponse) {}
+
+  rpc GetOnChainTransactionsByAddress(GetOnChainTransactionsByAddressRequest) returns (OnChainTransactionsResponse) {}
+
+  // Get on-chain fee estimates using mempool.space
+  rpc GetOnChainFeeEstimates(OnChainFeeEstimatesRequest) returns (OnChainFeeEstimatesResponse) {}
+
   // Subscribe to single invoice to get status updates
-  rpc WaitInvoiceSettledByPaymentHash (WaitInvoiceSettledByPaymentHashRequest) returns (stream InvoiceStatusResponse) {}
+  rpc WaitInvoiceSettledByPaymentHash(WaitInvoiceSettledByPaymentHashRequest) returns (stream InvoiceStatusResponse) {}
 
   // Subscribe to all invoices to get status updates, give list of node handles to only return invoices from those nodes
-  rpc SubscribeInvoiceStatuses (SubscribeInvoiceStatusesRequest) returns (stream InvoiceStatusResponse) {}
+  rpc SubscribeInvoiceStatuses(SubscribeInvoiceStatusesRequest) returns (stream InvoiceStatusResponse) {}
+
+  // Subscribe to single on-chain address to get transactions
+  // When the stream initiates it will send the latest confirmed transaction for the address if it exists
+  rpc WaitOnChainTransactionsByAddress(WaitOnChainTransactionsByAddressRequest) returns (stream OnChainTransaction) {}
+
+  // Subscribe to all on-chain transactions, give list of node handles to only return transactions from those nodes
+  rpc SubscribeOnChainTransactions(SubscribeOnChainTransactionsRequest) returns (stream OnChainTransaction) {}
 }
 
 
@@ -94,6 +111,30 @@ enum InvoiceStatus {
   InvoiceCancelled = 2;
   InvoiceAccepted = 3;
 }
+
+enum AddressType {
+  BECH32 = 0;
+  P2TR = 1;
+}
+
+enum ChainalysisStatus {
+  ChainalysisPending = 0;
+  ChainalysisDisabled = 1;
+  ChainalysisVerified = 2;
+  ChainalysisSuspicious = 3;
+  ChainalysisFraud = 4;
+}
+
+// FeeStatus is the status of the fee for the OnChain transaction
+enum FeeStatus {
+  // Fee is equal or higher than the mempool "high fee" estimate
+  CorrectFee = 0;
+  // Fee is equal or higher than the mempool "low fee"/"three blocks" estimate
+  LowFee = 1;
+  // Fee is lower than the mempool "low fee" estimate
+  InsufficientFee = 2;
+}
+
 
 message GetActiveNodesRequest {
   // Optional parameter to get only nodes of a specific network
@@ -169,8 +210,8 @@ message OpenChannelRequest {
   string public_key = 3;
   // Host of the node to open channel with in format of ip:port
   optional string host = 4;
-  int64 local_funding_amount = 5;
-  optional int64 push_amount = 6;
+  int64 local_funding_amount_sat = 5;
+  optional int64 push_amount_sat = 6;
   optional int32 target_conf = 7;
   optional bool private = 8;
   optional uint64 min_htlc_msat = 9;
@@ -250,6 +291,59 @@ message CreateInvoiceResponse {
   string payment_address = 4;
 }
 
+message CreateAddressRequest {
+  string node_handle = 1;
+  optional AddressType address_type = 2;
+}
+
+message CreateAddressResponse {
+  string address = 1;
+}
+
+message TagPeerRequest {
+  string node_handle = 1;
+  string tag_name = 2; // case insensitive
+  string peer_public_key = 3;
+}
+
+message TagPeerResponse {
+  bool success = 1;
+}
+
+message WorkflowRequest {
+  string alias = 1;
+  repeated WorkflowVariable variables = 2;
+}
+
+message WorkflowResponse {
+  bool success = 1;
+}
+
+message WorkflowVariable {
+  string name = 1;
+  optional string text = 2;
+  optional float number = 3;
+  optional google.protobuf.Timestamp date = 4;
+}
+
+message GetOnChainTransactionsByAddressRequest {
+  string address = 1;
+}
+
+message OnChainFeeEstimatesRequest {
+}
+
+message OnChainFeeEstimatesResponse {
+  // Fee rate that has the highest probability to get into next block (sat/vbyte)
+  int32 next_block_plus_standard_deviation_fee_rate = 1;
+  // Fee rate which should be enough for next block (sat/vbyte)
+  int32 next_block_fee_rate = 2;
+  // Fee rate which should get in a block in half an hour (sat/vbyte)
+  int32 three_blocks_fee_rate = 3;
+  // Fee rate which should get in a block in an hour (sat/vbyte)
+  int32 six_blocks_fee_rate = 4;
+}
+
 message WaitInvoiceSettledByPaymentHashRequest {
   bytes payment_hash = 1;
   optional int32 time_out_secs = 2;
@@ -268,4 +362,35 @@ message InvoiceStatusResponse {
 message SubscribeInvoiceStatusesRequest {
   repeated string node_handles = 1;
   optional google.protobuf.Timestamp start_time = 2;
+}
+
+message WaitOnChainTransactionsByAddressRequest {
+  string address = 1;
+  optional int32 time_out_secs = 2;
+  // The transaction will be sent over the stream repeatedly at every confirmation until the amount of confirmations is reached
+  optional uint32 confirmations = 3;
+}
+
+message SubscribeOnChainTransactionsRequest {
+  repeated string node_handles = 1;
+  optional google.protobuf.Timestamp start_time = 2;
+  // The transaction will be sent over the stream repeatedly at every confirmation until the amount of confirmations is reached
+  optional uint32 confirmations = 3;
+}
+
+message OnChainTransactionsResponse {
+  repeated OnChainTransaction transactions = 1;
+}
+
+message OnChainTransaction {
+  string transaction_hash = 1;
+  string destination_address = 2;
+  int64 amount_sat = 3;
+  int64 total_fees_sat = 4;
+  optional uint32 block_height = 5;
+  uint32 current_block_height = 6;
+  optional google.protobuf.Timestamp settle_date = 7;
+  string node_handle = 8;
+  ChainalysisStatus chainalysis_status = 9;
+  optional FeeStatus fee_status = 10;
 }

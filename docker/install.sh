@@ -28,7 +28,6 @@ stty echo
 printf "\n"
 
 # Set web UI port number
-
 printf "\n"
 echo Please choose a port number for the web UI.
 echo NB! Umbrel users needs to use a different port than 8080. Try 8081.
@@ -39,8 +38,17 @@ while [[ ! $UI_PORT =~ ^[0-9]+$ ]] || [[ $UI_PORT -lt 1 ]] || [[ $UI_PORT -gt 65
     read -p "Invalid port number. Please enter a valid port number from 1 through 65535: " UI_PORT
 done
 
-# Set network type
+# Set gRPC port number
+printf "\n"
+echo Please choose a port number for the Torq gRPC.
+read -p "Port number (default: 50051): " GRPC_PORT
+eval GRPC_PORT="${GRPC_PORT:=50051}"
 
+while [[ ! $GRPC_PORT =~ ^[0-9]+$ ]] || [[ $GRPC_PORT -lt 1 ]] || [[ $GRPC_PORT -gt 65535 ]]; do
+    read -p "Invalid port number. Please enter a valid port number from 1 through 65535: " GRPC_PORT
+done
+
+# Set network type
 printf "\n"
 echo "Only run with host network when your server has a firewall and doesn't automatically open all port to the internet."
 echo "You don't want the database to be accessible from the internet!"
@@ -76,9 +84,11 @@ sed -i.bak "s|<Path>|$TORQ_CONFIG|g"            $TORQDIR/docker-compose.yml && r
 if [[ "$NETWORK" == "bridge" ]]; then
   sed -i.bak "s/<YourDatabaseHost>/db/g"        $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
   sed -i.bak "s/<YourPort>/$UI_PORT/g"          $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
+  sed -i.bak "s/<YourGRPCPort>/$GRPC_PORT/g"    $TORQDIR/docker-compose.yml && rm $TORQDIR/docker-compose.yml.bak
 fi
 sed -i.bak "s/<YourUIPassword>/$UIPASSWORD/g"   $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
 sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
+sed -i.bak "s/<YourGRPCPort>/$GRPC_PORT/g"      $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
 if [[ "$NETWORK" == "host" ]]; then
   sed -i.bak "s/<YourDatabaseHost>/localhost/g" $TORQ_CONFIG                && rm $TORQ_CONFIG.bak
 fi
@@ -101,6 +111,7 @@ curl --location --silent --output "${TORQDIR}/${DELETE_COMMAND}"    https://raw.
 
 #start-torq setup
 sed -i.bak "s/<YourPort>/$UI_PORT/g"            $TORQDIR/${START_COMMAND}   && rm $TORQDIR/start-torq.bak
+sed -i.bak "s/<YourGRPCPort>/$GRPC_PORT/g"      $TORQDIR/${START_COMMAND}   && rm $TORQDIR/start-torq.bak
 
 chmod +x $TORQDIR/$START_COMMAND
 chmod +x $TORQDIR/$STOP_COMMAND

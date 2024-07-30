@@ -11,6 +11,7 @@ services:
       - start
     ports:
       - "<YourPort>:<YourPort>"
+      - "<YourGRPCPort>:<YourGRPCPort>"
     volumes:
       - <Path>:/home/torq/torq.conf
     extra_hosts:

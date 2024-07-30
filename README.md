@@ -77,30 +77,30 @@ Torq supports a TOML configuration file. The docker compose install script auto 
 You can find an example configuration file at [example-torq.conf](./docker/example-torq.conf)
 
 It is also possible not to use any TOML configuration files and use command like parameters or environment variables. The list of parameters are:
- - **--lnd.url**: Host:Port of the LND node (example: "127.0.0.1:10009")
- - **--lnd.macaroon-path**: Path on disk to LND Macaroon (example: "~/.lnd/admin.macaroon")
- - **--lnd.tls-path**: Path on disk to LND TLS file (example: "~/.lnd/tls.cert")
- - **--cln.url**:  Host:Port of the CLN node (example: "127.0.0.1:17272")
- - **--cln.certificate-path**: Path on disk to CLN client certificate file (example: "~/.cln/client.pem")
- - **--cln.key-path**: Path on disk to CLN client key file (example: "~/.cln/client-key.pem")
- - **--cln.ca-certificate-path**: Path on disk to CLN certificate authority file (example: "~/.cln/ca.pem")
- - **--db.name**: Name of the database (default: "torq")
- - **--db.user**: Name of the postgres user with access to the database (default: "postgres")
- - **--db.password**: Password used to access the database (default: "runningtorq")
- - **--db.port**: Port of the database (default: "5432")
- - **--db.host**: Host of the database (default: "localhost")
+ - **--lnd.url**: (optional) Host:Port of the LND node (example: "127.0.0.1:10009")
+ - **--lnd.macaroon-path**: (optional) Path on disk to LND Macaroon (example: "~/.lnd/admin.macaroon")
+ - **--lnd.tls-path**: (optional) Path on disk to LND TLS file (example: "~/.lnd/tls.cert")
+ - **--cln.url**: (optional) Host:Port of the CLN node (example: "127.0.0.1:17272")
+ - **--cln.certificate-path**: (optional) Path on disk to CLN client certificate file (example: "~/.cln/client.pem")
+ - **--cln.key-path**: (optional) Path on disk to CLN client key file (example: "~/.cln/client-key.pem")
+ - **--cln.ca-certificate-path**: (optional) Path on disk to CLN certificate authority file (example: "~/.cln/ca.pem")
+ - **--db.name**: (optional) Name of the database (default: "torq")
+ - **--db.user**: (optional) Name of the postgres user with access to the database (default: "postgres")
+ - **--db.password**: (optional) Password used to access the database (default: "runningtorq")
+ - **--db.port**: (optional) Port of the database (default: "5432")
+ - **--db.host**: (optional) Host of the database (default: "localhost")
  - **--torq.password**: Password used to access the API and frontend (example: "C44y78A4JXHCVziRcFqaJfFij5HpJhF6VwKjz4vR")
- - **--torq.network-interface**: The nework interface to serve the HTTP API (default: "0.0.0.0")
- - **--torq.port**: Port to serve the HTTP API (default: "8080")
- - **--torq.pprof.path**: When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). **See Note**
- - **--torq.prometheus.path**: When prometheus path is set then prometheus is loaded when Torq boots. (example: "localhost:7070"). **See Note**
- - **--torq.debuglevel**: Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
- - **--torq.vector.url**: Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
- - **--torq.cookie-path**: Path to auth cookie file
- - **--torq.no-sub**: Start the server without subscribing to node data (default: "false")
- - **--torq.auto-login**: Allows logging in without a password (default: "false")
- - **--customize.mempool.url**: Mempool custom URL (no trailing slash) (default: "https://mempool.space")
- - **--customize.fedi**: Enable Fedi mode (default: "false")
+ - **--torq.network-interface**: (optional) The nework interface to serve the HTTP API (default: "0.0.0.0")
+ - **--torq.port**: (optional) Port to serve the HTTP API (default: "8080")
+ - **--torq.pprof.path**: (optional) When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). **See Note**
+ - **--torq.prometheus.path**: (optional) When prometheus path is set then prometheus is loaded when Torq boots. (example: "localhost:7070"). **See Note**
+ - **--torq.debuglevel**: (optional) Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
+ - **--torq.vector.url**: (optional) Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
+ - **--torq.cookie-path**: (optional) Path to auth cookie file
+ - **--torq.no-sub**: (optional) Start the server without subscribing to node data (default: "false")
+ - **--torq.auto-login**: (optional) Allows logging in without a password (default: "false")
+ - **--customize.mempool.url**: (optional) Mempool custom URL (no trailing slash) (default: "https://mempool.space")
+ - **--customize.electrum.path**: (optional) Electrum path (example: "localhost:50001")
  - **--otel.exporter.type**: (optional) OpenTelemetry exporter type: stdout/file/jaeger (default: "stdout")
  - **--otel.exporter.endpoint**: (optional) OpenTelemetry exporter endpoint
  - **--otel.exporter.path**: (optional) OpenTelemetry exporter path (default: "traces.txt")
@@ -181,11 +181,13 @@ You need to provide these certificates once Torq is running (or as boot paramete
 
 ## Compatibility
 
-Torq `v0.22.1` <-> `v1.1.5` are all compatible with `CLN v23.05.*`
+Torq `v2.0.0` and up are compatible with `CLN v24.05.*` and `LND v0.18.2+`
+
+Torq `v1.5.0` <-> `v1.6.1` are compatible with `CLN v23.11.*`
 
 Torq `v1.2.0` <-> `v1.4.3` are compatible with `CLN v23.08.1+`
 
-Torq `v1.5.0` and up are compatible with `CLN v23.11.*`
+Torq `v0.22.1` <-> `v1.1.5` are all compatible with `CLN v23.05.*`
 
 ## Help and feedback
 
