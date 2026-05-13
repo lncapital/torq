@@ -181,6 +181,8 @@ You need to provide these certificates once Torq is running (or as boot paramete
 
 ## Compatibility
 
+Torq `v3.0.0` and up are compatible with `CLN v25.12.*` and `LND v0.20.*`
+
 Torq `v2.0.0` and up are compatible with `CLN v24.05.*` and `LND v0.18.2+`
 
 Torq `v1.5.0` <-> `v1.6.1` are compatible with `CLN v23.11.*`
