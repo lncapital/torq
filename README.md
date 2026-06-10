@@ -76,7 +76,7 @@ We're adding more guides and help articles on [docs.torq.co](https://docs.torq.c
 Torq supports a TOML configuration file. The docker compose install script auto generates this file.
 You can find an example configuration file at [example-torq.conf](./docker/example-torq.conf)
 
-It is also possible not to use any TOML configuration files and use command like parameters or environment variables. The list of parameters are:
+It is also possible not to use a TOML configuration file and use command like parameters or environment variables. The list of parameters are:
  - **--lnd.url**: (optional) Host:Port of the LND node (example: "127.0.0.1:10009")
  - **--lnd.macaroon-path**: (optional) Path on disk to LND Macaroon (example: "~/.lnd/admin.macaroon")
  - **--lnd.tls-path**: (optional) Path on disk to LND TLS file (example: "~/.lnd/tls.cert")
@@ -94,6 +94,7 @@ It is also possible not to use any TOML configuration files and use command like
  - **--torq.port**: (optional) Port to serve the HTTP API (default: "8080")
  - **--torq.pprof.path**: (optional) When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). **See Note**
  - **--torq.prometheus.path**: (optional) When prometheus path is set then prometheus is loaded when Torq boots. (example: "localhost:7070"). **See Note**
+ - **--torq.gin-log-style**: GIN request log style (json|text) (default: "json")
  - **--torq.debuglevel**: (optional) Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
  - **--torq.vector.url**: (optional) Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
  - **--torq.cookie-path**: (optional) Path to auth cookie file
