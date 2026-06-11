@@ -90,21 +90,21 @@ It is also possible not to use a TOML configuration file and use command like pa
  - **--db.port**: (optional) Port of the database (default: "5432")
  - **--db.host**: (optional) Host of the database (default: "localhost")
  - **--torq.password**: Password used to access the API and frontend (example: "C44y78A4JXHCVziRcFqaJfFij5HpJhF6VwKjz4vR")
- - **--torq.network-interface**: (optional) The nework interface to serve the HTTP API (default: "0.0.0.0")
+ - **--torq.network-interface**: (optional) The network interface to serve the HTTP API (default: "0.0.0.0")
  - **--torq.port**: (optional) Port to serve the HTTP API (default: "8080")
  - **--torq.pprof.path**: (optional) When pprof path is set then pprof is loaded when Torq boots. (example: ":6060"). **See Note**
  - **--torq.prometheus.path**: (optional) When prometheus path is set then prometheus is loaded when Torq boots. (example: "localhost:7070"). **See Note**
  - **--torq.gin-log-style**: GIN request log style (json|text) (default: "json")
  - **--torq.debuglevel**: (optional) Specify different debug levels (panic|fatal|error|warn|info|debug|trace) (default: "info")
- - **--torq.vector.url**: (optional) Alternative path for alternative vector service implementation (default: "https://vector.ln.capital/")
+ - **--torq.vector.url**: (optional) Alternative path for alternative vector service implementation (default: "https://vector.torq.co/")
  - **--torq.cookie-path**: (optional) Path to auth cookie file
  - **--torq.no-sub**: (optional) Start the server without subscribing to node data (default: "false")
  - **--torq.auto-login**: (optional) Allows logging in without a password (default: "false")
  - **--customize.mempool.url**: (optional) Mempool custom URL (no trailing slash) (default: "https://mempool.space")
  - **--customize.electrum.path**: (optional) Electrum path (example: "localhost:50001")
- - **--otel.exporter.type**: (optional) OpenTelemetry exporter type: stdout/file/jaeger (default: "stdout")
+ - **--otel.exporter.type**: (optional) OpenTelemetry exporter type: stdout/file/otlpHttp/otlpGrpc (default: none)
  - **--otel.exporter.endpoint**: (optional) OpenTelemetry exporter endpoint
- - **--otel.exporter.path**: (optional) OpenTelemetry exporter path (default: "traces.txt")
+ - **--otel.exporter.path**: (optional) OpenTelemetry exporter path for file type export (default: "traces.txt")
  - **--otel.sampler.fraction**: (optional) OpenTelemetry sampler fraction (default: "0.0")
  - **--bitcoind.network**: (optional) Bitcoind network: MainNet/TestNet/RegTest/SigNet/SimNet. (default: "MainNet")
  - **--bitcoind.url**: (optional) Bitcoind RPC Host:Port
